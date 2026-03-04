@@ -1,0 +1,28 @@
+from loguru import logger
+# student=["aman","ravi","rohit"]
+# for i in  range(len(student)):
+#     logger.info(f"The name of student {i+1} is {student[i]}")
+
+# user=int(input("enter the pattern"))
+
+# for i in range(user):
+#     logger.info(i*"$")
+
+# user=int(input("enter number "))
+# empty_list=[]
+# for i in range(user):
+#    if i%2==0:
+#        empty_list.append(i)
+# print(empty_list)
+        
+        
+# count=0
+# paragraph="the mountain is very huge. The boy is the THE very cute"
+# paragraph=paragraph.lower().split(" ")
+# for letters in paragraph:
+#     if letters=="the":
+#         count=count+1
+#     else:
+#         continue
+    
+# print(count)
