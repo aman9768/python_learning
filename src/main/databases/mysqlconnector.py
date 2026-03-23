@@ -2,28 +2,59 @@ from loguru import logger
 import mysql.connector
 
 
-def read_from_mysql(config,query):
-    try:
-        connection=mysql.connector.connect(host=config["mysql_db"]["host"],
-                                        user=config["mysql_db"]["user"],
-                                        password=config["mysql_db"]["password"],
-                                        database=config["mysql_db"]["database"])
+class MySqlConnection:
+    def __init__(self,config):
+        self.config=config
+        self.connection=None
+    
+    def connect(self):
+        try:
+            self.connection=mysql.connector.connect(host=self.config["mysql_db"]["host"],
+                                            user=self.config["mysql_db"]["user"],
+                                            password=self.config["mysql_db"]["password"],
+                                            database=self.config["mysql_db"]["database"])
+            logger.info("mysql connection successful")
+        except Exception as e:
+            logger.info(f"error occured, {e}") 
+            raise e   
+    
+    def close(self):
+        if self.connection.is_connected():
+            self.connection.close()
+            logger.info("mysql connection closed")
 
-        logger.info(f"The connection is successful {connection}")
+class MySqlCrudOperation:
+    def __init__(self,mysql_connection):
+        self.connection=mysql_connection
+        
+    def read_from_mysql(self,query):
+        try:
+            cursor=self.connection.cursor()
+            cursor.execute(query)
+            result=cursor.fetchall()
+            logger.info(f"{result}")
+            return result
+        except Exception as e:
+            logger.info(f"error occured in mysql query run {e}")
+            raise e
+        finally:
+            if cursor:
+                cursor.close()
+                logger.info("cursor closed")
+    def insert_from_mysql(self,query,parameter):
+        try:
+            cursor=self.connection.cursor()
+            cursor.execute(query)
+            result=cursor.fetchall()
+            return result
+        except Exception as e:
+            logger.info(f"error occured {e}")
+            raise e
+        finally:
+            self.connection.commit()
+    
+            
 
-        cursor=connection.cursor()
-        cursor.execute(query)
-        result=cursor.fetchall()
-        logger.info(f"{result}")
-        return result
 
-    # insert_query = "INSERT INTO labours_table (name, role, wages) VALUES (%s, %s, %s)"
-    # cursor.execute(insert_query, ('Aman', 'labour', 900))
-    # connection.commit()
-    except Exception as e:
-        logger.info(f"error occured in mysql {e}")
-        raise e
-    finally:
-        connection.close()
-        cursor.close()
+
 
